@@ -50,7 +50,7 @@ apt-get autoremove -y;
 printf "${RED} INSTALL PACKAGE 1"
 printf "${NC}\n"
 
-apt-get install unzip vim git-core curl wget build-essential python-software-properties -y 
+apt-get install unzip vim git-core curl wget build-essential python-software-properties ps-watcher -y 
 
 printf "${RED} INSTALL PACAGE FOR PHP"
 printf "${NC}\n"
@@ -184,7 +184,19 @@ update-rc.d php7-fpm defaults
 printf "${RED} INSTALL NGINX"
 printf "${NC}\n"
 
-apt-get install nginx ps-watcher -y
+cat >> /etc/apt/sources.list <<EOF
+deb http://nginx.org/packages/ubuntu/ trusty nginx
+deb-src http://nginx.org/packages/ubuntu/ trusty nginx
+EOF
+
+wget http://nginx.org/keys/nginx_signing.key
+apt-key add nginx_signing.key
+
+apt-get update -y
+apt-get install nginx -y
+
+rm nginx_signing.key
+
 sed -i -- "s/www-data/$CURRENT_USER/g" /etc/nginx/nginx.conf
 
 
@@ -400,3 +412,7 @@ printf "${NC}\n"
 apt-get clean -y;
 apt-get autoclean -y;
 apt-get autoremove -y;
+
+
+# ref
+# http://www.pilishen.com/442.html
